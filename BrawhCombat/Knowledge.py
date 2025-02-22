@@ -1,6 +1,5 @@
 import pygame
 import random
-import time
 import math
 import sys
 
@@ -162,6 +161,32 @@ player2 = Character(700, 500, 0, 0, 0, (0, 0, 255), 690, 10, 2)
 players = [player1, player2]
 
 
+def main():
+    global started, winner
+    while not started:
+        started = main_menu()
+
+    winner = game()
+    game_over(winner)
+
+
+def restart():
+    global started
+    global winner
+    global player1
+    global player2
+    global players
+
+    started = False
+    winner = None
+
+    player1 = Character(200, 500, 0, 0, 0, (255, 0, 0), 10, 10, 1)
+    player2 = Character(700, 500, 0, 0, 0, (0, 0, 255), 690, 10, 2)
+    players = [player1, player2]
+
+    main()
+
+
 def main_menu():
     text1_surface = my_font.render("Welcome To Our Game!", True, (255, 255, 255))
     text2_surface = my_font.render("Press Any Key To Start", True, (255, 255, 255))
@@ -212,7 +237,6 @@ def main_menu():
 
 def game():
     while True:
-
         clock.tick(30)
         screen.fill((0, 216, 255))
         for i in range(4):
@@ -292,7 +316,7 @@ def game():
 def game_over(winner):
     current_time = pygame.time.get_ticks()
     text1_surface = my_font.render(f"{winner} Has Won!", True, (255, 255, 255))
-    text2_surface = my_font.render("Press Any Key To Exit", True, (255, 255, 255))
+    text2_surface = my_font.render("Press R To Restart Or Any Other Key To Quit", True, (255, 255, 255))
     text1_x = 400 - text1_surface.get_width() // 2
     base1_y = 200
     text2_x = 400 - text2_surface.get_width() // 2
@@ -304,6 +328,7 @@ def game_over(winner):
     while True:
         clock.tick(30)
         screen.fill((0, 216, 255))
+
         for i in range(4):
             screen.blit(cloud, clouds[i])
             clouds[i].x -= 1
@@ -318,11 +343,16 @@ def game_over(winner):
 
         t += frequency
 
-        events = pygame.event.get()
-        for event in events:
-            if event.type == pygame.QUIT or event.type == pygame.KEYDOWN and pygame.time.get_ticks() - current_time > 500:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+            if event.type == pygame.KEYDOWN and pygame.time.get_ticks() - current_time >= 500:
+                if event.key == pygame.K_r:
+                    restart()
+                else:
+                    pygame.quit()
+                    sys.exit()
 
         for i in range(10):
             for j in range(10):
@@ -335,9 +365,6 @@ def game_over(winner):
 
         pygame.display.update()
 
+
 if __name__ == "__main__":
-    while not started:
-        started = main_menu()
-    while winner == None:
-        winner = game()
-    game_over(winner)
+    main()
