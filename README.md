@@ -1,7 +1,7 @@
 # BrawhCombat
 
 ## Description
-Brawler Game is a 2D multiplayer fighting game built using Pygame. Two players control characters that can move, jump, and collide with each other to deal damage. The goal is to deplete the opponent's health and be the last one standing!
+BrawhCombat is a 2D multiplayer fighting game built using Pygame. Two players control characters that can move, jump, and collide with each other to deal damage. The goal is to deplete the opponent's health and be the last one standing!
 
 ## Features
 - **Two-player local gameplay**
