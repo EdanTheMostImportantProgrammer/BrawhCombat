@@ -60,4 +60,4 @@ Brawler Game is a 2D multiplayer fighting game built using Pygame. Two players c
 This project is open-source. Feel free to modify and improve it!
 
 ## Author
-Created by [Leonabcd123 And edog007].
+Created by Leonabcd123 And edog007.
