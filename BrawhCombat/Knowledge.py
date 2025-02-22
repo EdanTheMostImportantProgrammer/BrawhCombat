@@ -87,7 +87,7 @@ class Character:
                 self.index = 0
             self.current_img = self.images_right[self.index]
             self.index += 1
-            pygame.time.delay(1)
+            pygame.time.delay(10)
         self.mask = pygame.mask.from_surface(self.current_img)
         self.speed_x += 1
         if self.speed_x > 8:
@@ -101,7 +101,7 @@ class Character:
                 self.index = 0
             self.current_img = self.images_left[self.index]
             self.index += 1
-            pygame.time.delay(1)
+            pygame.time.delay(10)
         self.mask = pygame.mask.from_surface(self.current_img)
         self.speed_x -= 1
         if self.speed_x < -8:
