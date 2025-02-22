@@ -134,8 +134,6 @@ player1 = Character(200, 500, 0, 0, 0, (255, 0, 0), 10, 10, 1)
 player2 = Character(700, 500, 0, 0, 0, (0, 0, 255), 690, 10, 2)
 players = [player1, player2]
 
-ground_rec = pygame.rect.Rect((0, 600), (800, 200))
-
 
 def main_menu():
     text1_surface = my_font.render("Welcome To Our Game!", True, (255, 255, 255))
@@ -156,8 +154,6 @@ def main_menu():
             clouds[i].x -= 1
             if clouds[i].x <= -200:
                 clouds[i].x = 800
-
-        pygame.draw.rect(screen, (255, 255, 255), ground_rec)
 
         text1_y = base1_y + amplitude * math.sin(t)
         text2_y = base2_y + amplitude * math.sin(t)
@@ -209,16 +205,17 @@ def game():
         player2.move()
 
         for player in players:
-            player.img_rect = player.current_img.get_rect(topright=(player.x, player.y))
-            player.mask = pygame.mask.from_surface(player.current_img)
-            screen.blit(player.current_img, player.img_rect)
-
-            if player.y + 100 >= ground_rec.top:
+            if player.y + 100 >= 600:
                 player.touching_ground = True
                 player.y = 500
                 player.speed_y = 0
             else:
                 player.touching_ground = False
+            player.img_rect = player.current_img.get_rect(topright=(player.x, player.y))
+            player.mask = pygame.mask.from_surface(player.current_img)
+            screen.blit(player.current_img, player.img_rect)
+
+
 
         pygame.draw.rect(screen, (0, 255, 0), player1.health_bar)
         pygame.draw.rect(screen, (0, 255, 0), player2.health_bar)
@@ -227,8 +224,6 @@ def game():
 
         if player1.mask.overlap(player2.mask, (player1.x - player2.x, player1.y - player2.y)):
             player1.bump(player2)
-
-        pygame.draw.rect(screen, (255, 255, 255), ground_rec)
 
         events = pygame.event.get()
         for event in events:
@@ -287,8 +282,6 @@ def game_over(winner):
             clouds[i].x -= 1
             if clouds[i].x <= -200:
                 clouds[i].x = 800
-
-        pygame.draw.rect(screen, (255, 255, 255), ground_rec)
 
         text1_y = base1_y + amplitude * math.sin(t)
         text2_y = base2_y + amplitude * math.sin(t)
