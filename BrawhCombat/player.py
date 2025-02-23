@@ -4,30 +4,14 @@ class Character:
         self.x = x
         self.y = y
         self.id = id
-        if id == 1:
-            self.images_left = [pygame.image.load("Player1/left.png").convert_alpha(),
-                                pygame.image.load("Player1/left_1.png").convert_alpha(), pygame.image.load(
-                    "Player1/left_2.png").convert_alpha(), pygame.image.load("Player1/left_3.png").convert_alpha(),
-                                pygame.image.load("Player1/left_4.png").convert_alpha()]
-            self.images_right = [pygame.image.load("Player1/right.png").convert_alpha(),
-                                 pygame.image.load("Player1/right_1.png").convert_alpha(), pygame.image.load(
-                    "Player1/right_2.png").convert_alpha(), pygame.image.load("Player1/right_3.png").convert_alpha(),
-                                 pygame.image.load("Player1/right_4.png").convert_alpha()]
-            for i in range(len(self.images_left)):
-                self.images_left[i] = pygame.transform.scale(self.images_left[i], (100, 100))
-                self.images_right[i] = pygame.transform.scale(self.images_right[i], (100, 100))
-            self.current_img = self.images_left[0]
-        else:
-            self.images_left = [pygame.image.load("Player2/left.png").convert_alpha(), pygame.image.load("Player2/left_1.png").convert_alpha(), pygame.image.load(
-                "Player2/left_2.png").convert_alpha(), pygame.image.load("Player2/left_3.png").convert_alpha(), pygame.image.load("Player2/left_4.png").convert_alpha()]
-            self.images_right = [pygame.image.load("Player2/right.png").convert_alpha(),
-                                pygame.image.load("Player2/right_1.png").convert_alpha(), pygame.image.load(
-                    "Player2/right_2.png").convert_alpha(), pygame.image.load("Player2/right_3.png").convert_alpha(),
-                                pygame.image.load("Player2/right_4.png").convert_alpha()]
-            for i in range(len(self.images_left)):
-                self.images_left[i] = pygame.transform.scale(self.images_left[i], (100, 100))
-                self.images_right[i] = pygame.transform.scale(self.images_right[i], (100, 100))
-            self.current_img = self.images_left[0]
+        folder = "Player1" if id == 1 else "Player2"
+        self.images_left = [pygame.image.load(f"{folder}/left_{i}.png").convert_alpha() for i in range(5)]
+        self.images_right = [pygame.image.load(f"{folder}/right_{i}.png").convert_alpha() for i in range(5)]
+        for i in range(5):
+            self.images_left[i] = pygame.transform.scale(self.images_left[i], (100, 100))
+            self.images_right[i] = pygame.transform.scale(self.images_right[i], (100, 100))
+
+        self.current_img = self.images_left[0]
         self.img_rect = self.current_img.get_rect(topright=(self.x, self.y))
         self.mask = pygame.mask.from_surface(self.current_img)
         self.speed_x = speed_x
