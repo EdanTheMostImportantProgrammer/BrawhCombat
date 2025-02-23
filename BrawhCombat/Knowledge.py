@@ -1,6 +1,7 @@
 from utilities import *
 
 pygame.init()
+
 started = False
 winner = False
 restarted = False

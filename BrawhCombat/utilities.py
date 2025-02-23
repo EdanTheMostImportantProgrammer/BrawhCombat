@@ -79,10 +79,8 @@ def game():
             winner = "Player 1"
             return winner
 
-        player1.move()
-        player2.move()
-
         for player in players:
+            player.move()
             if player.y + 100 >= 600:
                 player.touching_ground = True
                 player.y = 500

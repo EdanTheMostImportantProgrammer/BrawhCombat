@@ -10,6 +10,7 @@ started = False
 winner = None
 G = 1
 screen = pygame.display.set_mode(SCREEN_SIZE)
+pygame.display.set_caption("BrawhCombat")
 ground = pygame.image.load("ground.png").convert_alpha()
 ground = pygame.transform.scale(ground, (80, 20))
 grass1 = pygame.image.load("grass1.png").convert_alpha()
