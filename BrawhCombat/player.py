@@ -80,11 +80,11 @@ class Character:
         if target.x > self.x:
             target.x += 1
             self.x -= 1
-        if target.y - self.y >= 32:
-            self.speed_y = 0
+        if target.y > self.y:
+            self.y = target.img_rect.top - 100
             self.jump()
-        if self.y - target.y >= 32:
-            target.speed_y = 0
+        if self.y > target.y:
+            target.y = self.img_rect.top - 100
             target.jump()
         else:
             swapselfx = self.speed_x

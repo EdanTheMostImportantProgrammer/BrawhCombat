@@ -79,8 +79,13 @@ def game():
             winner = "Player 1"
             return winner
 
+        player1.move()
+        player2.move()
+
+        if player1.mask.overlap(player2.mask, (player1.x - player2.x, player1.y - player2.y)):
+            player1.bump(player2)
+
         for player in players:
-            player.move()
             if player.y + 100 >= 600:
                 player.touching_ground = True
                 player.y = 500
@@ -98,8 +103,7 @@ def game():
         pygame.draw.rect(screen, (255, 255, 255), player1.health_bar_outline, 2)
         pygame.draw.rect(screen, (255, 255, 255), player2.health_bar_outline, 2)
 
-        if player1.mask.overlap(player2.mask, (player1.x - player2.x, player1.y - player2.y)):
-            player1.bump(player2)
+
 
         events = pygame.event.get()
         for event in events:
