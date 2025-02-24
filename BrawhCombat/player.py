@@ -62,7 +62,10 @@ class Character:
         self.speed_y = -12
         self.jumps += 1
 
-
+    def switch_speeds(self, target):
+        swapselfx = self.speed_x
+        self.speed_x = target.speed_x
+        target.speed_x = swapselfx
 
     def bump(self, target):
         damage = (abs(self.speed_x) + abs(self.speed_y)) - (abs(target.speed_x) + abs(target.speed_y))
@@ -81,15 +84,15 @@ class Character:
             target.x += 1
             self.x -= 1
         if target.y > self.y:
+            self.switch_speeds(target)
             self.y = target.img_rect.top - 100
             self.jump()
         if self.y > target.y:
+            self.switch_speeds(target)
             target.y = self.img_rect.top - 100
             target.jump()
         else:
-            swapselfx = self.speed_x
-            self.speed_x = target.speed_x
-            target.speed_x = swapselfx
+            self.switch_speeds(target)
 
 
     def move(self):
