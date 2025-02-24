@@ -81,9 +81,11 @@ class Character:
             target.x += 1
             self.x -= 1
         if target.y - self.y >= 32:
+            self.y = target.y - 100
             self.speed_y = 0
             self.jump()
         if self.y - target.y >= 32:
+            target.y = self.y - 100
             target.speed_y = 0
             target.jump()
         else:
