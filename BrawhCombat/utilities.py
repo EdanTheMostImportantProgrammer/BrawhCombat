@@ -87,14 +87,9 @@ def game():
                 player.speed_y = 0
             else:
                 player.touching_ground = False
+            player.img_rect = player.current_img.get_rect(topright=(player.x, player.y))
             player.mask = pygame.mask.from_surface(player.current_img)
-
-        if player1.mask.overlap(player2.mask, (player1.x - player2.x, player1.y - player2.y)):
-            player1.bump(player2)
-        player1.img_rect = player1.current_img.get_rect(midtop=(player1.x, player1.y))
-        player2.img_rect = player2.current_img.get_rect(midtop=(player2.x, player2.y))
-        screen.blit(player1.current_img, player1.img_rect)
-        screen.blit(player2.current_img, player2.img_rect)
+            screen.blit(player.current_img, player.img_rect)
 
 
 
@@ -103,7 +98,8 @@ def game():
         pygame.draw.rect(screen, (255, 255, 255), player1.health_bar_outline, 2)
         pygame.draw.rect(screen, (255, 255, 255), player2.health_bar_outline, 2)
 
-
+        if player1.mask.overlap(player2.mask, (player1.x - player2.x, player1.y - player2.y)):
+            player1.bump(player2)
 
         events = pygame.event.get()
         for event in events:
