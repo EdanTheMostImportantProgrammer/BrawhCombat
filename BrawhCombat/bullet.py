@@ -1,16 +1,17 @@
 from player import *
 
 class Bullet:
-    def __init__(self, x, y):
+    def __init__(self, x, y, p_direction):
         self.x = x
         self.y = y
+        self.p_direction = p_direction
         self.speed = 15
         self.start_time = pygame.time.get_ticks()
         self.direction = pygame.math.Vector2(0, 0)
         self.aimed = False
         self.bullet_left = pygame.image.load("bullet_left.png").convert_alpha()
         self.bullet_right = pygame.image.load("bullet_right.png").convert_alpha()
-        self.current_image = self.bullet_left
+        self.current_image = self.bullet_left if self.p_direction == "left" else self.bullet_right
         self.img_rect = self.current_image.get_rect(topright=(self.x, self.y))
         self.mask = pygame.mask.from_surface(self.current_image)
 
@@ -26,7 +27,12 @@ class Bullet:
 
     def collision(self):
         if self.x > 800 or self.x < 0:
+            if self.current_image == self.bullet_right:
+                self.current_image = self.bullet_left
+            else:
+                self.current_image = self.bullet_right
             self.direction.x *= -1
+
         if self.y > 600 or self.y < 0:
             self.direction.y *= -1
 

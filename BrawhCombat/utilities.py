@@ -1,10 +1,7 @@
 import math
 import random
 import sys
-
 import pygame.time
-
-from player import *
 from bullet import *
 def restart():
     global started, winner, player1, player2, players
@@ -67,10 +64,7 @@ def main_menu():
         pygame.display.update()
 
 def game():
-    global ulting, current_time, ulted
-    bullet = Bullet(player2.x, player2.y)
-    ulting = False
-    ulted = False
+    bullet = Bullet(0, 0, "left")
     while True:
         clock.tick(30)
         screen.fill((0, 216, 255))
@@ -100,9 +94,25 @@ def game():
                 player.speed_y = 0
             else:
                 player.touching_ground = False
-            player.img_rect = player.current_img.get_rect(topright=(player.x, player.y))
-            player.mask = pygame.mask.from_surface(player.current_img)
-            screen.blit(player.current_img, player.img_rect)
+
+            if player.ulted:
+                if player.speed_y >= 0:
+                    player.invisible = True
+                    player.ult_time = pygame.time.get_ticks()
+                    bullet = Bullet(player.x, player.y, player.direction)
+                    player.ulting = True
+                    player.ulted = False
+
+            if player.ulting:
+                bullet.update()
+                if pygame.time.get_ticks() - player.ult_time > 7500:
+                    player.ulting = False
+                    player.invisible = False
+
+            if not player.invisible:
+                player.img_rect = player.current_img.get_rect(topright=(player.x, player.y))
+                player.mask = pygame.mask.from_surface(player.current_img)
+                screen.blit(player.current_img, player.img_rect)
 
 
 
@@ -123,23 +133,13 @@ def game():
                     player1.jump()
                 if event.key == pygame.K_UP and player2.jumps < player2.jump_limit:
                     player2.jump()
-                if event.key == pygame.K_1 and not ulted:
-                    ulted = True
+                if event.key == pygame.K_e and not player1.ulted:
+                    player1.ulted = True
+                    player1.speed_y = -20
+                if event.key == pygame.K_DOWN and not player2.ulted:
+                    player2.ulted = True
                     player2.speed_y = -20
 
-        if ulted:
-            if player2.speed_y >= 0:
-                players.pop()
-                current_time = pygame.time.get_ticks()
-                bullet = Bullet(player2.x, player2.y)
-                ulting = True
-                ulted = False
-
-        if ulting:
-            bullet.update()
-            if pygame.time.get_ticks() - current_time > 7500:
-                ulting = False
-                players.append(player2)
         pressed_keys = pygame.key.get_pressed()
         if pressed_keys[pygame.K_d]:
             player1.move_right()

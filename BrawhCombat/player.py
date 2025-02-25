@@ -10,8 +10,7 @@ class Character:
         for i in range(5):
             self.images_left[i] = pygame.transform.scale(self.images_left[i], (100, 100))
             self.images_right[i] = pygame.transform.scale(self.images_right[i], (100, 100))
-
-        self.current_img = self.images_left[0]
+        self.current_img = self.images_right[0] if id == 1 else self.images_left[0]
         self.img_rect = self.current_img.get_rect(topright=(self.x, self.y))
         self.mask = pygame.mask.from_surface(self.current_img)
         self.speed_x = speed_x
@@ -26,41 +25,52 @@ class Character:
         self.health_bar = pygame.rect.Rect(self.health_bar_x, self.health_bar_y, self.health, 20)
         self.health_bar_outline = pygame.rect.Rect(self.health_bar.left, self.health_bar.top, 100, 20)
         self.index = 0
+        self.ulted = False
+        self.ulting = False
+        self.ult_time = pygame.time.get_ticks()
+        self.invisible = False
+        self.direction = "right" if self.id == 1 else "left"
 
     def gravity(self):
-        self.speed_y += G
+        if not self.invisible:
+            self.speed_y += G
 
     def move_right(self):
-        if not self.touching_ground:
-            self.current_img = self.images_right[0]
-        else:
-            if self.index > 4:
-                self.index = 0
-            self.current_img = self.images_right[self.index]
-            self.index += 1
-            pygame.time.delay(10)
-        self.mask = pygame.mask.from_surface(self.current_img)
-        self.speed_x += 1
-        if self.speed_x > 8:
-            self.speed_x = 8
+        if not self.invisible:
+            self.direction = "right"
+            if not self.touching_ground:
+                self.current_img = self.images_right[0]
+            else:
+                if self.index > 4:
+                    self.index = 0
+                self.current_img = self.images_right[self.index]
+                self.index += 1
+                pygame.time.delay(10)
+            self.mask = pygame.mask.from_surface(self.current_img)
+            self.speed_x += 1
+            if self.speed_x > 8:
+                self.speed_x = 8
 
     def move_left(self):
-        if not self.touching_ground:
-            self.current_img = self.images_left[0]
-        else:
-            if self.index > 4:
-                self.index = 0
-            self.current_img = self.images_left[self.index]
-            self.index += 1
-            pygame.time.delay(10)
-        self.mask = pygame.mask.from_surface(self.current_img)
-        self.speed_x -= 1
-        if self.speed_x < -8:
-            self.speed_x = -8
+        if not self.invisible:
+            self.direction = "left"
+            if not self.touching_ground:
+                self.current_img = self.images_left[0]
+            else:
+                if self.index > 4:
+                    self.index = 0
+                self.current_img = self.images_left[self.index]
+                self.index += 1
+                pygame.time.delay(10)
+            self.mask = pygame.mask.from_surface(self.current_img)
+            self.speed_x -= 1
+            if self.speed_x < -8:
+                self.speed_x = -8
 
     def jump(self):
-        self.speed_y = -12
-        self.jumps += 1
+        if not self.invisible:
+            self.speed_y = -12
+            self.jumps += 1
 
     def switch_speeds(self, target):
         swapselfx = self.speed_x
@@ -96,18 +106,19 @@ class Character:
 
 
     def move(self):
-        if self.x >= 831:
-            self.speed_x *= -0.9
-            self.x -= 1
-        if self.x <= 84:
-            self.speed_x *= -0.9
-            self.x += 1
-        if not self.touching_ground:
-            self.gravity()
-        else:
-            self.jumps = 0
-        self.x += self.speed_x
-        self.y += self.speed_y
+        if not self.invisible:
+            if self.x >= 831:
+                self.speed_x *= -0.9
+                self.x -= 1
+            if self.x <= 84:
+                self.speed_x *= -0.9
+                self.x += 1
+            if not self.touching_ground:
+                self.gravity()
+            else:
+                self.jumps = 0
+            self.x += self.speed_x
+            self.y += self.speed_y
 
 
 player1 = Character(200, 500, 0, 0, 0, (255, 0, 0), 10, 10, 1)
