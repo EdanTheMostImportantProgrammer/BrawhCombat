@@ -1,7 +1,11 @@
 import math
 import random
 import sys
+
+import pygame.time
+
 from player import *
+from bullet import *
 def restart():
     global started, winner, player1, player2, players
     started = False
@@ -63,6 +67,10 @@ def main_menu():
         pygame.display.update()
 
 def game():
+    global ulting, current_time, ulted
+    bullet = Bullet(player2.x, player2.y)
+    ulting = False
+    ulted = False
     while True:
         clock.tick(30)
         screen.fill((0, 216, 255))
@@ -115,6 +123,23 @@ def game():
                     player1.jump()
                 if event.key == pygame.K_UP and player2.jumps < player2.jump_limit:
                     player2.jump()
+                if event.key == pygame.K_1 and not ulted:
+                    ulted = True
+                    player2.speed_y = -20
+
+        if ulted:
+            if player2.speed_y >= 0:
+                players.pop()
+                current_time = pygame.time.get_ticks()
+                bullet = Bullet(player2.x, player2.y)
+                ulting = True
+                ulted = False
+
+        if ulting:
+            bullet.update()
+            if pygame.time.get_ticks() - current_time > 7500:
+                ulting = False
+                players.append(player2)
         pressed_keys = pygame.key.get_pressed()
         if pressed_keys[pygame.K_d]:
             player1.move_right()
