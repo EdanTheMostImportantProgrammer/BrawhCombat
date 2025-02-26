@@ -9,8 +9,10 @@ class Bullet:
         self.start_time = pygame.time.get_ticks()
         self.direction = pygame.math.Vector2(0, 0)
         self.aimed = False
-        self.bullet_left = pygame.image.load("bullet_left.png").convert_alpha()
-        self.bullet_right = pygame.image.load("bullet_right.png").convert_alpha()
+        self.bullet_left = pygame.image.load("Bullet/bullet_left.png").convert_alpha()
+        self.bullet_right = pygame.image.load("Bullet/bullet_right.png").convert_alpha()
+        self.bullet_up = pygame.image.load("Bullet/bullet_up.png").convert_alpha()
+        self.bullet_down = pygame.image.load("Bullet/bullet_down.png").convert_alpha()
         self.current_image = self.bullet_left if self.p_direction == "left" else self.bullet_right
         self.img_rect = self.current_image.get_rect(topright=(self.x, self.y))
         self.mask = pygame.mask.from_surface(self.current_image)
@@ -27,18 +29,24 @@ class Bullet:
                 self.direction = (target - start).normalize() * self.speed
 
     def collision(self):
-        if self.x > 800 or self.x < 0:
-            if self.current_image == self.bullet_right:
+        if self.x >= 800 or self.x <= 0:
+            if self.x >= 800:
                 self.current_image = self.bullet_left
             else:
                 self.current_image = self.bullet_right
             self.direction.x *= -1
 
-        if self.y > 600 or self.y < 0:
+        if self.y >= 600 or self.y <= 0:
+            if self.y >= 600:
+                self.current_image = self.bullet_up
+            else:
+                self.current_image = self.bullet_down
             self.direction.y *= -1
+
 
         if self.target.mask.overlap(self.mask, (self.img_rect.x - self.target.img_rect.x, self.img_rect.y - self.target.img_rect.y)):
             self.target.health = 0
+
     def update(self):
         self.aim()
         self.collision()
