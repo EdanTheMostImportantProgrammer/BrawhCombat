@@ -1,7 +1,7 @@
 from player import *
 
 class Bullet:
-    def __init__(self, x, y, p_direction):
+    def __init__(self, x, y, p_direction, target):
         self.x = x
         self.y = y
         self.p_direction = p_direction
@@ -14,6 +14,7 @@ class Bullet:
         self.current_image = self.bullet_left if self.p_direction == "left" else self.bullet_right
         self.img_rect = self.current_image.get_rect(topright=(self.x, self.y))
         self.mask = pygame.mask.from_surface(self.current_image)
+        self.target = target
 
     def aim(self):
         if not self.aimed:
@@ -36,8 +37,8 @@ class Bullet:
         if self.y > 600 or self.y < 0:
             self.direction.y *= -1
 
-        if player1.mask.overlap(self.mask, (self.img_rect.x - player1.img_rect.x, self.img_rect.y - player1.img_rect.y)):
-            player1.health = 0
+        if self.target.mask.overlap(self.mask, (self.img_rect.x - self.target.img_rect.x, self.img_rect.y - self.target.img_rect.y)):
+            self.target.health = 0
     def update(self):
         self.aim()
         self.collision()
