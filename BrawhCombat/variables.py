@@ -11,15 +11,15 @@ winner = None
 G = 1
 screen = pygame.display.set_mode(SCREEN_SIZE)
 pygame.display.set_caption("BrawhCombat")
-ground = pygame.image.load("ground.png").convert_alpha()
+ground = pygame.image.load("Background/ground.png").convert_alpha()
 ground = pygame.transform.scale(ground, (80, 20))
-grass1 = pygame.image.load("grass1.png").convert_alpha()
+grass1 = pygame.image.load("Background/grass1.png").convert_alpha()
 grass1 = pygame.transform.scale(grass1, (80, 20))
-grass2 = pygame.image.load("grass2.png").convert_alpha()
+grass2 = pygame.image.load("Background/grass2.png").convert_alpha()
 grass2 = pygame.transform.scale(grass2, (80, 20))
 temp = [grass1, grass2]
 grasses = []
-cloud = pygame.image.load("cloud.png").convert_alpha()
+cloud = pygame.image.load("Background/cloud.png").convert_alpha()
 cloud = pygame.transform.scale(cloud, (200, 200))
 clouds = []
 for i in range(4):
