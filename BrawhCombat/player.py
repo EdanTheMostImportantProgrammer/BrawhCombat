@@ -95,11 +95,11 @@ class Character:
             self.x -= 1
         if target.y > self.y:
             self.switch_speeds(target)
-            self.y = target.img_rect.top - 100
+            self.y = target.y - 100
             self.jump()
         if self.y > target.y:
             self.switch_speeds(target)
-            target.y = self.img_rect.top - 100
+            target.y = self.y - 100
             target.jump()
         else:
             self.switch_speeds(target)
