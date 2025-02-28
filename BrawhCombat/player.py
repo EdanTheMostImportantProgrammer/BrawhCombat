@@ -30,6 +30,8 @@ class Character:
         self.ult_time = pygame.time.get_ticks()
         self.invisible = False
         self.direction = "right" if self.id == 1 else "left"
+        self.jumping_sound = mixer.music.load("Sound/jump.mp3")
+        mixer.music.set_volume(0.4)
 
     def gravity(self):
         if not self.invisible:
@@ -68,6 +70,7 @@ class Character:
                 self.speed_x = -8
 
     def jump(self):
+        mixer.music.play()
         if not self.invisible:
             self.speed_y = -12
             self.jumps += 1

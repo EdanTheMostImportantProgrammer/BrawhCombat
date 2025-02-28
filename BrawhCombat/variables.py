@@ -1,6 +1,8 @@
 import pygame
+from pygame import mixer
 
 pygame.init()
+mixer.init()
 
 my_font = pygame.font.SysFont('Comic Sans MS', 30)
 
