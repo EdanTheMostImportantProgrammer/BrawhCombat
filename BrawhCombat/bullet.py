@@ -5,7 +5,7 @@ class Bullet:
         self.x = x
         self.y = y
         self.p_direction = p_direction
-        self.speed = 15
+        self.speed = 25
         self.start_time = pygame.time.get_ticks()
         self.direction = pygame.math.Vector2(0, 0)
         self.aimed = False
