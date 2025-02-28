@@ -43,9 +43,9 @@ class Bullet:
                 self.current_image = self.bullet_down
             self.direction.y *= -1
 
-
-        if self.target.mask.overlap(self.mask, (self.img_rect.x - self.target.img_rect.x, self.img_rect.y - self.target.img_rect.y)):
-            self.target.health = 0
+        if not self.target.ulted:
+            if self.target.mask.overlap(self.mask, (self.img_rect.x - self.target.img_rect.x, self.img_rect.y - self.target.img_rect.y)):
+                self.target.health = 0
 
     def update(self):
         self.aim()
