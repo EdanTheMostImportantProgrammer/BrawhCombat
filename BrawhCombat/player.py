@@ -97,12 +97,14 @@ class Character:
             target.x += 1
             self.x -= 1
         if target.y > self.y:
+            if target.touching_ground:
+                self.y = target.y - 100
             self.switch_speeds(target)
-            self.y = target.y - 100
             self.jump()
         if self.y > target.y:
+            if self.touching_ground:
+                target.y = self.y - 100
             self.switch_speeds(target)
-            target.y = self.y - 100
             target.jump()
         else:
             self.switch_speeds(target)
