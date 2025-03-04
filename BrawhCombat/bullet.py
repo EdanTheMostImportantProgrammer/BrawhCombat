@@ -40,17 +40,18 @@ class Bullet:
 
     def collision(self):
         if self.x >= 800 or self.x <= 0:
-            self.angle *= -1
             self.direction.x *= -1
+            self.angle = math.degrees(math.atan2(-self.direction.y, self.direction.x)) - self.correction_angle
             self.rot_image = pygame.transform.rotate(self.current_image, self.angle)
 
         if self.y >= 600 or self.y <= 0:
-            self.angle *= -1
+            self.angle = math.degrees(math.atan2(self.direction.y, self.direction.x)) - self.correction_angle
             self.direction.y *= -1
             self.rot_image = pygame.transform.rotate(self.current_image, self.angle)
 
         if not self.target.ulted:
-            if self.target.mask.overlap(self.mask, (self.img_rect.x - self.target.img_rect.x, self.img_rect.y - self.target.img_rect.y)):
+            if self.target.mask.overlap(self.mask, (self.img_rect.x - self.target.img_rect.x,
+                                                    self.img_rect.y - self.target.img_rect.y)):
                 self.target.health = 0
 
     def update(self):
