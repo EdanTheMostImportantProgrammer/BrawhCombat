@@ -124,7 +124,18 @@ class Character:
                 self.jumps = 0
             self.x += self.speed_x
             self.y += self.speed_y
+            self.check_collision(player2)
 
+    def check_collision(self, target):
+        if self.mask.overlap(target.mask, (self.x - target.x, self.y - target.y)):
+            if self.x > target.x:
+                self.img_rect.left = target.img_rect.right
+            elif target.x > self.x:
+                target.img_rect.left = self.img_rect.right
+            if self.y < target.y:
+                self.img_rect.top = target.img_rect.bottom
+            elif target.y < self.y:
+                target.img_rect.top = self.img_rect.bottom
 
 player1 = Character(200, 500, 0, 0, 0, (255, 0, 0), 10, 10, 1)
 player2 = Character(700, 500, 0, 0, 0, (0, 0, 255), 690, 10, 2)
