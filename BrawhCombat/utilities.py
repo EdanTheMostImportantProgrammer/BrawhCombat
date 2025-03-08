@@ -64,8 +64,8 @@ def main_menu():
         pygame.display.update()
 
 def game():
-    bullet1 = Bullet(0, 0, "left", player1)
-    bullet2 = Bullet(0, 0, "right", player2)
+    bullet1 = Bullet(0, 0, player1)
+    bullet2 = Bullet(0, 0, player2)
     while True:
         clock.tick(30)
         screen.fill((0, 216, 255))
@@ -101,9 +101,9 @@ def game():
                     player.invisible = True
                     player.ult_time = pygame.time.get_ticks()
                     if player.id == 1:
-                        bullet1 = Bullet(player.x, player.y, player.direction, player2)
+                        bullet1 = Bullet(player.x, player.y, player2)
                     else:
-                        bullet2 = Bullet(player.x, player.y, player.direction, player1)
+                        bullet2 = Bullet(player.x, player.y, player1)
                     player.ulting = True
                     player.ulted = False
 
