@@ -5,6 +5,8 @@ pygame.init()
 started = False
 winner = False
 restarted = False
+
+
 def main():
     global started, winner, restarted, player1, player2, players
     while not started:
@@ -16,6 +18,7 @@ def main():
         restarted = False
         started, winner, player1, player2, players = restart()
         main()
+
 
 if __name__ == "__main__":
     main()

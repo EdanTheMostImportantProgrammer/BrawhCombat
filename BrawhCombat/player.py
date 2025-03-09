@@ -1,16 +1,19 @@
 from variables import *
+
+
 class Character:
-    def __init__(self, x, y, speed_x, speed_y, jumps, color, health_bar_x, health_bar_y, energy_bar_x, energy_bar_y, id):
+    def __init__(self, x, y, speed_x, speed_y, jumps, color, health_bar_x, health_bar_y, energy_bar_x,
+                 energy_bar_y, id):
         self.x = x
         self.y = y
         self.id = id
-        folder = "Player1" if id == 1 else "Player2"
-        self.images_left = [pygame.image.load(f"{folder}/left_{i}.png").convert_alpha() for i in range(5)]
-        self.images_right = [pygame.image.load(f"{folder}/right_{i}.png").convert_alpha() for i in range(5)]
-        for i in range(5):
-            self.images_left[i] = pygame.transform.scale(self.images_left[i], (100, 100))
-            self.images_right[i] = pygame.transform.scale(self.images_right[i], (100, 100))
-        self.current_img = self.images_right[0] if id == 1 else self.images_left[0]
+        folder = "Player1" if self.id == 1 else "Player2"
+        self.images_left = [pygame.image.load(f"{folder}/left_{j}.png").convert_alpha() for j in range(5)]
+        self.images_right = [pygame.image.load(f"{folder}/right_{j}.png").convert_alpha() for j in range(5)]
+        for j in range(5):
+            self.images_left[j] = pygame.transform.scale(self.images_left[j], (100, 100))
+            self.images_right[j] = pygame.transform.scale(self.images_right[j], (100, 100))
+        self.current_img = self.images_right[0] if self.id == 1 else self.images_left[0]
         self.img_rect = self.current_img.get_rect(topright=(self.x, self.y))
         self.mask = pygame.mask.from_surface(self.current_img)
         self.speed_x = speed_x
@@ -35,7 +38,7 @@ class Character:
         self.ult_time = pygame.time.get_ticks()
         self.invisible = False
         self.direction = "right" if self.id == 1 else "left"
-        self.jumping_sound = mixer.music.load("Sound/jump.mp3")
+        mixer.music.load("Sound/jump.mp3")
         mixer.music.set_volume(0.4)
 
     def gravity(self):
@@ -120,7 +123,6 @@ class Character:
         else:
             self.switch_speeds(target)
 
-
     def move(self):
         if not self.invisible:
             if self.x >= 831:
@@ -147,6 +149,7 @@ class Character:
                 self.img_rect.top = target.img_rect.bottom
             elif target.y < self.y:
                 target.img_rect.top = self.img_rect.bottom
+
 
 player1 = Character(200, 500, 0, 0, 0, (255, 0, 0), 10, 10, 10, 40, 1)
 player2 = Character(700, 500, 0, 0, 0, (0, 0, 255), 690, 10, 690, 40, 2)
