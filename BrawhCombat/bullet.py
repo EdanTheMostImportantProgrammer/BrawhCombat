@@ -6,11 +6,12 @@ class Bullet:
     def __init__(self, x, y, target):
         self.x = x
         self.y = y
-        self.speed = 25
+        self.speed = 30
         self.start_time = pygame.time.get_ticks()
         self.direction = pygame.math.Vector2(0, 0)
         self.aimed = False
         self.bullet_right = pygame.image.load("Bullet/bullet_right.png").convert_alpha()
+        self.bullet_right = pygame.transform.scale(self.bullet_right, (80, 80))
         self.current_image = self.bullet_right
         self.img_rect = self.current_image.get_rect(center=(x, y))
         self.mask = pygame.mask.from_surface(self.current_image)
