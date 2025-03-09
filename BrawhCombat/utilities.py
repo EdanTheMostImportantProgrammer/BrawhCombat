@@ -1,15 +1,18 @@
-import math
 import random
 import sys
+
 import pygame.time
+
 from bullet import *
+
+
 def restart():
     global started, winner, player1, player2, players
     started = False
     winner = None
 
-    player1 = Character(200, 500, 0, 0, 0, (255, 0, 0), 10, 10, 1)
-    player2 = Character(700, 500, 0, 0, 0, (0, 0, 255), 690, 10, 2)
+    player1 = Character(200, 500, 0, 0, 0, (255, 0, 0), 10, 10, 10, 40, 1)
+    player2 = Character(700, 500, 0, 0, 0, (0, 0, 255), 690, 10, 690, 40, 2)
     players = [player1, player2]
 
     return started, winner, player1, player2, players
