@@ -66,6 +66,7 @@ def main_menu():
 
         pygame.display.update()
 
+
 def game():
     bullet1 = Bullet(0, 0, player1)
     bullet2 = Bullet(0, 0, player2)
@@ -135,8 +136,6 @@ def game():
             pygame.draw.rect(screen, (0, 0, 255), player.energy_bar)
             pygame.draw.rect(screen, (255, 255, 255), player.energy_bar_outline, 2)
 
-
-
         events = pygame.event.get()
         for event in events:
             if event.type == pygame.QUIT:
@@ -151,12 +150,14 @@ def game():
                     player1.ulted = True
                     player1.speed_y = -20
                     player1.energy = 0
-                    player1.energy_bar = pygame.rect.Rect(player1.energy_bar_x, player1.energy_bar_y, player1.energy, 20)
+                    player1.energy_bar = pygame.rect.Rect(player1.energy_bar_x,
+                                                          player1.energy_bar_y, player1.energy, 20)
                 if event.key == pygame.K_DOWN and not player2.ulted and player2.energy == 100:
                     player2.ulted = True
                     player2.speed_y = -20
                     player2.energy = 0
-                    player2.energy_bar = pygame.rect.Rect(player2.energy_bar_x, player2.energy_bar_y, player2.energy, 20)
+                    player2.energy_bar = pygame.rect.Rect(player2.energy_bar_x, player2.energy_bar_y,
+                                                          player2.energy, 20)
 
         pressed_keys = pygame.key.get_pressed()
         if pressed_keys[pygame.K_d]:
@@ -171,7 +172,6 @@ def game():
         if pressed_keys[pygame.K_LEFT]:
             player2.move_left()
 
-
         for i in range(10):
             for j in range(10):
                 if i == 0:
@@ -180,7 +180,6 @@ def game():
                     screen.blit(grasses[j], (j * 80, 600 + (i * 20)))
                 else:
                     screen.blit(ground, (j * 80, 600 + (i * 20)))
-
 
         pygame.display.update()
 
