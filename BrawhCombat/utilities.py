@@ -127,12 +127,10 @@ def game():
                 player.mask = pygame.mask.from_surface(player.current_img)
                 screen.blit(player.current_img, player.img_rect)
 
-
-
-        pygame.draw.rect(screen, (0, 255, 0), player1.health_bar)
-        pygame.draw.rect(screen, (0, 255, 0), player2.health_bar)
-        pygame.draw.rect(screen, (255, 255, 255), player1.health_bar_outline, 2)
-        pygame.draw.rect(screen, (255, 255, 255), player2.health_bar_outline, 2)
+            pygame.draw.rect(screen, (0, 255, 0), player.health_bar)
+            pygame.draw.rect(screen, (255, 255, 255), player.health_bar_outline, 2)
+            pygame.draw.rect(screen, (0, 0, 255), player.energy_bar)
+            pygame.draw.rect(screen, (255, 255, 255), player.energy_bar_outline, 2)
 
 
 
@@ -146,12 +144,16 @@ def game():
                     player1.jump()
                 if event.key == pygame.K_UP and player2.jumps < player2.jump_limit:
                     player2.jump()
-                if event.key == pygame.K_e and not player1.ulted:
+                if event.key == pygame.K_e and not player1.ulted and player1.energy == 100:
                     player1.ulted = True
                     player1.speed_y = -20
-                if event.key == pygame.K_DOWN and not player2.ulted:
+                    player1.energy = 0
+                    player1.energy_bar = pygame.rect.Rect(player1.energy_bar_x, player1.energy_bar_y, player1.energy, 20)
+                if event.key == pygame.K_DOWN and not player2.ulted and player2.energy == 100:
                     player2.ulted = True
                     player2.speed_y = -20
+                    player2.energy = 0
+                    player2.energy_bar = pygame.rect.Rect(player2.energy_bar_x, player2.energy_bar_y, player2.energy, 20)
 
         pressed_keys = pygame.key.get_pressed()
         if pressed_keys[pygame.K_d]:
