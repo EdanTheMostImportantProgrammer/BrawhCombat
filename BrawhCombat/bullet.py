@@ -49,7 +49,7 @@ class Bullet:
             self.direction.y *= -1
             self.rot_image = pygame.transform.rotate(self.current_image, self.angle)
 
-        if not self.target.ulted:
+        if not self.target.invisible:
             if self.target.mask.overlap(self.mask, (self.img_rect.x - self.target.img_rect.x,
                                                     self.img_rect.y - self.target.img_rect.y)):
                 self.target.health = 0
