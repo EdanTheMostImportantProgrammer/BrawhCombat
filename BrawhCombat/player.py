@@ -1,6 +1,6 @@
 from variables import *
 class Character:
-    def __init__(self, x, y, speed_x, speed_y, jumps, color, health_bar_x, health_bar_y, id):
+    def __init__(self, x, y, speed_x, speed_y, jumps, color, health_bar_x, health_bar_y, energy_bar_x, energy_bar_y, id):
         self.x = x
         self.y = y
         self.id = id
@@ -24,6 +24,11 @@ class Character:
         self.health_bar_y = health_bar_y
         self.health_bar = pygame.rect.Rect(self.health_bar_x, self.health_bar_y, self.health, 20)
         self.health_bar_outline = pygame.rect.Rect(self.health_bar.left, self.health_bar.top, 100, 20)
+        self.energy = 0
+        self.energy_bar_x = energy_bar_x
+        self.energy_bar_y = energy_bar_y
+        self.energy_bar = pygame.rect.Rect(self.energy_bar_x, self.energy_bar_y, self.energy, 20)
+        self.energy_bar_outline = pygame.rect.Rect(self.energy_bar.left, self.energy_bar.top, 100, 20)
         self.index = 0
         self.ulted = False
         self.ulting = False
@@ -85,9 +90,15 @@ class Character:
         if damage > 0:
             target.health -= damage
             target.health_bar = pygame.rect.Rect(target.health_bar_x, target.health_bar_y, target.health, 20)
+            if self.energy < 100:
+                self.energy += 5
+                self.energy_bar = pygame.rect.Rect(self.energy_bar_x, self.energy_bar_y, self.energy, 20)
         elif damage < 0:
             self.health += damage
             self.health_bar = pygame.rect.Rect(self.health_bar_x, self.health_bar_y, self.health, 20)
+            if target.energy < 100:
+                target.energy += 5
+                target.energy_bar = pygame.rect.Rect(target.energy_bar_x, target.energy_bar_y, target.energy, 20)
         else:
             pass
         if self.x > target.x:
@@ -137,6 +148,6 @@ class Character:
             elif target.y < self.y:
                 target.img_rect.top = self.img_rect.bottom
 
-player1 = Character(200, 500, 0, 0, 0, (255, 0, 0), 10, 10, 1)
-player2 = Character(700, 500, 0, 0, 0, (0, 0, 255), 690, 10, 2)
+player1 = Character(200, 500, 0, 0, 0, (255, 0, 0), 10, 10, 10, 40, 1)
+player2 = Character(700, 500, 0, 0, 0, (0, 0, 255), 690, 10, 690, 40, 2)
 players = [player1, player2]
