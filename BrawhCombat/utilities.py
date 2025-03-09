@@ -101,9 +101,15 @@ def game():
                     player.invisible = True
                     player.ult_time = pygame.time.get_ticks()
                     if player.id == 1:
-                        bullet1 = Bullet(player.x, player.y, player2)
+                        if player1.x < 768:
+                            bullet1 = Bullet(player.x, player.y, player2)
+                        else:
+                            bullet1 = Bullet(768, player.y, player2)
                     else:
-                        bullet2 = Bullet(player.x, player.y, player1)
+                        if player2.x < 768:
+                            bullet2 = Bullet(player.x, player.y, player1)
+                        else:
+                            bullet2 = Bullet(768, player.y, player1)
                     player.ulting = True
                     player.ulted = False
 
