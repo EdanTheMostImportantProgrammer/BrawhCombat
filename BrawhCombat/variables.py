@@ -25,6 +25,7 @@ grasses = []
 cloud = pygame.image.load("Background/cloud.png").convert_alpha()
 cloud = pygame.transform.scale(cloud, (200, 200))
 clouds = []
+player_width = 60
 for i in range(4):
     cloud_rect = cloud.get_rect(center=(150 + i * 250, 150))
     clouds.append(cloud_rect)

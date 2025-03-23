@@ -1,3 +1,5 @@
+import time
+
 from variables import *
 
 
@@ -40,6 +42,8 @@ class Character:
         self.direction = "right" if self.id == 1 else "left"
         mixer.music.load("Sound/jump.mp3")
         mixer.music.set_volume(0.4)
+        self.sword = False
+        self.sword_timer = 0
 
     def gravity(self):
         if not self.invisible:
@@ -91,19 +95,22 @@ class Character:
     def bump(self, target):
         damage = (abs(self.speed_x) + abs(self.speed_y)) - (abs(target.speed_x) + abs(target.speed_y))
         if damage > 0:
+            if self.sword:
+                damage *= 4
             target.health -= damage
             target.health_bar = pygame.rect.Rect(target.health_bar_x, target.health_bar_y, target.health, 20)
             if self.energy < 100:
                 self.energy += 5
                 self.energy_bar = pygame.rect.Rect(self.energy_bar_x, self.energy_bar_y, self.energy, 20)
         elif damage < 0:
+            if target.sword:
+                damage *= 4
             self.health += damage
             self.health_bar = pygame.rect.Rect(self.health_bar_x, self.health_bar_y, self.health, 20)
             if target.energy < 100:
                 target.energy += 5
                 target.energy_bar = pygame.rect.Rect(target.energy_bar_x, target.energy_bar_y, target.energy, 20)
-        else:
-            pass
+
         if self.x > target.x:
             self.x += 1
             target.x -= 1
@@ -113,17 +120,19 @@ class Character:
         if target.y > self.y:
             if target.touching_ground:
                 self.y = target.y - 100
-            self.switch_speeds(target)
             self.jump()
         if self.y > target.y:
             if self.touching_ground:
                 target.y = self.y - 100
-            self.switch_speeds(target)
             target.jump()
-        else:
-            self.switch_speeds(target)
+        elif target.img_rect.top > self.img_rect.bottom and not target.touching_ground:
+            self.jump()
+        elif self.img_rect.top > target.img_rect.bottom and not self.touching_ground:
+            target.jump()
 
-    def move(self):
+        self.switch_speeds(target)
+
+    def update(self):
         if not self.invisible:
             if self.x >= 831:
                 self.speed_x *= -0.9
@@ -138,6 +147,11 @@ class Character:
             self.x += self.speed_x
             self.y += self.speed_y
             self.check_collision(player2)
+            if self.sword:
+                if self.sword_timer + 0.5 <= time.time():
+                    self.sword = False
+                    print("sword off")
+
 
     def check_collision(self, target):
         if self.mask.overlap(target.mask, (self.x - target.x, self.y - target.y)):
@@ -149,6 +163,24 @@ class Character:
                 self.img_rect.top = target.img_rect.bottom
             elif target.y < self.y:
                 target.img_rect.top = self.img_rect.bottom
+
+    def attack(self):
+        self.energy -= 5
+        self.energy_bar = pygame.rect.Rect(self.energy_bar_x, self.energy_bar_y, self.energy, 20)
+        self.sword = True
+        self.sword_timer = time.time()
+        self.launch()
+        print("sword_on")
+        return self.energy, self.energy_bar, self.sword
+
+    def launch(self):
+        mx, my = pygame.mouse.get_pos()
+        target = pygame.math.Vector2(mx, my)
+        start = pygame.math.Vector2(self.x, self.y)
+        self.direction = (target - start).normalize() * 10
+        self.speed_x += self.direction.x
+        self.speed_y = self.direction.y
+
 
 
 player1 = Character(200, 500, 0, 0, 0, (255, 0, 0), 10, 10, 10, 40, 1)

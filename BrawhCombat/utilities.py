@@ -86,8 +86,8 @@ def game():
             winner = "Player 1"
             return winner
 
-        player1.move()
-        player2.move()
+        player1.update()
+        player2.update()
 
         if player1.mask.overlap(player2.mask, (player1.x - player2.x, player1.y - player2.y)):
             player1.bump(player2)
@@ -158,6 +158,9 @@ def game():
                     player2.energy = 0
                     player2.energy_bar = pygame.rect.Rect(player2.energy_bar_x, player2.energy_bar_y,
                                                           player2.energy, 20)
+
+                if event.key == pygame.K_r:
+                    player1.attack()
 
         pressed_keys = pygame.key.get_pressed()
         if pressed_keys[pygame.K_d]:
