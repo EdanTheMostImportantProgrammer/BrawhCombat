@@ -93,6 +93,8 @@ def game():
             player1.bump(player2)
 
         for player in players:
+            if player.sword:
+                player.current_img = player.images_right[5] if player.id == 1 else player.images_left[5]
             if player.y + 100 >= 600:
                 player.touching_ground = True
                 player.y = 500
@@ -159,8 +161,11 @@ def game():
                     player2.energy_bar = pygame.rect.Rect(player2.energy_bar_x, player2.energy_bar_y,
                                                           player2.energy, 20)
 
-                if event.key == pygame.K_r:
-                    player1.attack()
+                if event.key == pygame.K_r and player1.energy >= 5 and not player1.sword:
+                    player1.sword_attack()
+
+                if event.key == pygame.K_q and player1.energy >= 5:
+                    player1.dash_attack()
 
         pressed_keys = pygame.key.get_pressed()
         if pressed_keys[pygame.K_d]:
