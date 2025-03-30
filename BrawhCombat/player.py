@@ -1,4 +1,5 @@
 import time
+from CPU import *
 
 from variables import *
 
@@ -111,6 +112,7 @@ class Character:
                 target.energy += 5
                 target.energy_bar = pygame.rect.Rect(target.energy_bar_x, target.energy_bar_y, target.energy, 20)
 
+
         if self.x > target.x:
             self.x += 1
             target.x -= 1
@@ -120,10 +122,12 @@ class Character:
         if target.y > self.y:
             if target.touching_ground:
                 self.y = target.y - 100
+
             self.jump()
         if self.y > target.y:
             if self.touching_ground:
                 target.y = self.y - 100
+
             target.jump()
         elif target.img_rect.top > self.img_rect.bottom and not target.touching_ground:
             self.jump()
@@ -150,8 +154,7 @@ class Character:
             if self.sword:
                 if self.sword_timer + 0.5 <= time.time():
                     self.sword = False
-                    print("sword off")
-
+                    self.current_img = self.images_right[0] if self.id == 1 else self.images_left[0]
 
     def check_collision(self, target):
         if self.mask.overlap(target.mask, (self.x - target.x, self.y - target.y)):
@@ -164,16 +167,16 @@ class Character:
             elif target.y < self.y:
                 target.img_rect.top = self.img_rect.bottom
 
-    def attack(self):
+    def sword_attack(self):
         self.energy -= 5
         self.energy_bar = pygame.rect.Rect(self.energy_bar_x, self.energy_bar_y, self.energy, 20)
         self.sword = True
         self.sword_timer = time.time()
-        self.launch()
         print("sword_on")
-        return self.energy, self.energy_bar, self.sword
 
-    def launch(self):
+    def dash_attack(self):
+        self.energy -= 5
+        self.energy_bar = pygame.rect.Rect(self.energy_bar_x, self.energy_bar_y, self.energy, 20)
         mx, my = pygame.mouse.get_pos()
         target = pygame.math.Vector2(mx, my)
         start = pygame.math.Vector2(self.x, self.y)
@@ -182,7 +185,7 @@ class Character:
         self.speed_y = self.direction.y
 
 
-
 player1 = Character(200, 500, 0, 0, 0, (255, 0, 0), 10, 10, 10, 40, 1)
 player2 = Character(700, 500, 0, 0, 0, (0, 0, 255), 690, 10, 690, 40, 2)
 players = [player1, player2]
+cpu = CPU(100, player2, player1)
