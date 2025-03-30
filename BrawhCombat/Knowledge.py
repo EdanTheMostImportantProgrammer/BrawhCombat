@@ -8,7 +8,7 @@ restarted = False
 
 
 def main():
-    global started, winner, restarted, player1, player2, players
+    global started, winner, restarted, player1, player2, players, cpu
     while not started:
         started = main_menu()
 
@@ -16,7 +16,7 @@ def main():
     restarted = game_over(winner)
     if restarted:
         restarted = False
-        started, winner, player1, player2, players = restart()
+        started, winner, player1, player2, players, cpu = restart()
         main()
 
 
