@@ -11,9 +11,9 @@ class Character:
         self.y = y
         self.id = id
         folder = "Player1" if self.id == 1 else "Player2"
-        self.images_left = [pygame.image.load(f"{folder}/left_{j}.png").convert_alpha() for j in range(5)]
-        self.images_right = [pygame.image.load(f"{folder}/right_{j}.png").convert_alpha() for j in range(5)]
-        for j in range(5):
+        self.images_left = [pygame.image.load(f"{folder}/left_{j}.png").convert_alpha() for j in range(6)]
+        self.images_right = [pygame.image.load(f"{folder}/right_{j}.png").convert_alpha() for j in range(6)]
+        for j in range(6):
             self.images_left[j] = pygame.transform.scale(self.images_left[j], (100, 100))
             self.images_right[j] = pygame.transform.scale(self.images_right[j], (100, 100))
         self.current_img = self.images_right[0] if self.id == 1 else self.images_left[0]
