@@ -1,191 +1,248 @@
-import time
-from CPU import *
+import random
+import sys
 
-from variables import *
+import pygame.time
+
+from bullet import *
 
 
-class Character:
-    def __init__(self, x, y, speed_x, speed_y, jumps, color, health_bar_x, health_bar_y, energy_bar_x,
-                 energy_bar_y, id):
-        self.x = x
-        self.y = y
-        self.id = id
-        folder = "Player1" if self.id == 1 else "Player2"
-        self.images_left = [pygame.image.load(f"{folder}/left_{j}.png").convert_alpha() for j in range(5)]
-        self.images_right = [pygame.image.load(f"{folder}/right_{j}.png").convert_alpha() for j in range(5)]
-        for j in range(5):
-            self.images_left[j] = pygame.transform.scale(self.images_left[j], (100, 100))
-            self.images_right[j] = pygame.transform.scale(self.images_right[j], (100, 100))
-        self.current_img = self.images_right[0] if self.id == 1 else self.images_left[0]
-        self.img_rect = self.current_img.get_rect(topright=(self.x, self.y))
-        self.mask = pygame.mask.from_surface(self.current_img)
-        self.speed_x = speed_x
-        self.speed_y = speed_y
-        self.jump_limit = 1
-        self.jumps = jumps
-        self.color = color
-        self.touching_ground = False
-        self.health = 100
-        self.health_bar_x = health_bar_x
-        self.health_bar_y = health_bar_y
-        self.health_bar = pygame.rect.Rect(self.health_bar_x, self.health_bar_y, self.health, 20)
-        self.health_bar_outline = pygame.rect.Rect(self.health_bar.left, self.health_bar.top, 100, 20)
-        self.energy = 0
-        self.energy_bar_x = energy_bar_x
-        self.energy_bar_y = energy_bar_y
-        self.energy_bar = pygame.rect.Rect(self.energy_bar_x, self.energy_bar_y, self.energy, 20)
-        self.energy_bar_outline = pygame.rect.Rect(self.energy_bar.left, self.energy_bar.top, 100, 20)
-        self.index = 0
-        self.ulted = False
-        self.ulting = False
-        self.ult_time = pygame.time.get_ticks()
-        self.invisible = False
-        self.direction = "right" if self.id == 1 else "left"
-        mixer.music.load("Sound/jump.mp3")
-        mixer.music.set_volume(0.4)
-        self.sword = False
-        self.sword_timer = 0
+def restart():
+    global started, winner, player1, player2, players, cpu
+    started = False
+    winner = None
 
-    def gravity(self):
-        if not self.invisible:
-            self.speed_y += G
+    player1 = Character(200, 500, 0, 0, 0, (255, 0, 0), 10, 10, 10, 40, 1)
+    player2 = Character(700, 500, 0, 0, 0, (0, 0, 255), 690, 10, 690, 40, 2)
+    players = [player1, player2]
+    cpu = CPU(100, player2, player1)
 
-    def move_right(self):
-        if not self.invisible:
-            self.direction = "right"
-            if not self.touching_ground:
-                self.current_img = self.images_right[0]
+    return started, winner, player1, player2, players, cpu
+
+
+def main_menu():
+    text1_surface = my_font.render("Welcome To Our Game!", True, (255, 255, 255))
+    text2_surface = my_font.render("Press Any Key To Start", True, (255, 255, 255))
+    text1_x = 239
+    base1_y = 200
+    text2_x = 239
+    base2_y = 300
+    amplitude = 50
+    frequency = 0.05
+
+    t = 0
+    while True:
+        clock.tick(30)
+        screen.fill((0, 216, 255))
+        for i in range(4):
+            screen.blit(cloud, clouds[i])
+            clouds[i].x -= 1
+            if clouds[i].x <= -200:
+                clouds[i].x = 800
+
+        text1_y = base1_y + amplitude * math.sin(t)
+        text2_y = base2_y + amplitude * math.sin(t)
+
+        screen.blit(text1_surface, (text1_x, int(text1_y)))
+        screen.blit(text2_surface, (text2_x, int(text2_y)))
+
+        t += frequency
+
+        events = pygame.event.get()
+        for event in events:
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.KEYDOWN:
+                started = True
+                return started
+
+        for i in range(10):
+            for j in range(10):
+                if i == 0:
+                    grass = random.randint(0, 1)
+                    grasses.append(temp[grass])
+                    screen.blit(grasses[j], (j * 80, 600 + (i * 20)))
+                else:
+                    screen.blit(ground, (j * 80, 600 + (i * 20)))
+
+        pygame.display.update()
+
+
+def game():
+    bullet1 = Bullet(0, 0, player1)
+    bullet2 = Bullet(0, 0, player2)
+    while True:
+        clock.tick(30)
+        screen.fill((0, 216, 255))
+        for i in range(4):
+            screen.blit(cloud, clouds[i])
+            clouds[i].x -= 1
+            if clouds[i].x <= -200:
+                clouds[i].x = 800
+
+        if player1.health <= 0:
+            winner = "Player 2"
+            return winner
+        elif player2.health <= 0:
+            winner = "Player 1"
+            return winner
+
+        player1.update()
+        player2.update()
+
+        if player1.mask.overlap(player2.mask, (player1.x - player2.x, player1.y - player2.y)):
+            player1.bump(player2)
+
+        cpu.update()
+
+        for player in players:
+            if player.sword:
+                player.current_img = player.images_right[5] if player.id == 1 else player.images_left[5]
+            if player.y + 100 >= 600:
+                player.touching_ground = True
+                player.y = 500
+                player.speed_y = 0
             else:
-                if self.index > 4:
-                    self.index = 0
-                self.current_img = self.images_right[self.index]
-                self.index += 1
-                pygame.time.delay(10)
-            self.mask = pygame.mask.from_surface(self.current_img)
-            self.speed_x += 1
-            if self.speed_x > 8:
-                self.speed_x = 8
+                player.touching_ground = False
 
-    def move_left(self):
-        if not self.invisible:
-            self.direction = "left"
-            if not self.touching_ground:
-                self.current_img = self.images_left[0]
-            else:
-                if self.index > 4:
-                    self.index = 0
-                self.current_img = self.images_left[self.index]
-                self.index += 1
-                pygame.time.delay(10)
-            self.mask = pygame.mask.from_surface(self.current_img)
-            self.speed_x -= 1
-            if self.speed_x < -8:
-                self.speed_x = -8
+            if player.ulted:
+                if player.speed_y >= 0:
+                    player.invisible = True
+                    player.ult_time = pygame.time.get_ticks()
+                    if player.id == 1:
+                        if player1.x < 768:
+                            bullet1 = Bullet(player.x, player.y, player2)
+                        else:
+                            bullet1 = Bullet(768, player.y, player2)
+                    else:
+                        if player2.x < 768:
+                            bullet2 = Bullet(player.x, player.y, player1)
+                        else:
+                            bullet2 = Bullet(768, player.y, player1)
+                    player.ulting = True
+                    player.ulted = False
 
-    def jump(self):
-        mixer.music.play()
-        if not self.invisible:
-            self.speed_y = -12
-            self.jumps += 1
+            if player.ulting:
+                if player.id == 1:
+                    bullet1.update()
+                else:
+                    bullet2.update()
+                if pygame.time.get_ticks() - player.ult_time > 7500:
+                    player.ulting = False
+                    player.invisible = False
 
-    def switch_speeds(self, target):
-        swapselfx = self.speed_x
-        self.speed_x = target.speed_x
-        target.speed_x = swapselfx
+            if not player.invisible:
+                player.img_rect = player.current_img.get_rect(topright=(player.x, player.y))
+                player.mask = pygame.mask.from_surface(player.current_img)
+                screen.blit(player.current_img, player.img_rect)
 
-    def bump(self, target):
-        damage = (abs(self.speed_x) + abs(self.speed_y)) - (abs(target.speed_x) + abs(target.speed_y))
-        if damage > 0:
-            if self.sword:
-                damage *= 4
-            target.health -= damage
-            target.health_bar = pygame.rect.Rect(target.health_bar_x, target.health_bar_y, target.health, 20)
-            if self.energy < 100:
-                self.energy += 5
-                self.energy_bar = pygame.rect.Rect(self.energy_bar_x, self.energy_bar_y, self.energy, 20)
-        elif damage < 0:
-            if target.sword:
-                damage *= 4
-            self.health += damage
-            self.health_bar = pygame.rect.Rect(self.health_bar_x, self.health_bar_y, self.health, 20)
-            if target.energy < 100:
-                target.energy += 5
-                target.energy_bar = pygame.rect.Rect(target.energy_bar_x, target.energy_bar_y, target.energy, 20)
+            pygame.draw.rect(screen, (0, 255, 0), player.health_bar)
+            pygame.draw.rect(screen, (255, 255, 255), player.health_bar_outline, 2)
+            pygame.draw.rect(screen, (0, 0, 255), player.energy_bar)
+            pygame.draw.rect(screen, (255, 255, 255), player.energy_bar_outline, 2)
 
+        events = pygame.event.get()
+        for event in events:
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE and player1.jumps < player1.jump_limit:
+                    player1.jump()
+                if event.key == pygame.K_UP and player2.jumps < player2.jump_limit:
+                    player2.jump()
+                if event.key == pygame.K_e and not player1.ulted and player1.energy == 100:
+                    player1.ulted = True
+                    player1.speed_y = -20
+                    player1.energy = 0
+                    player1.energy_bar = pygame.rect.Rect(player1.energy_bar_x,
+                                                          player1.energy_bar_y, player1.energy, 20)
+                if event.key == pygame.K_DOWN and not player2.ulted and player2.energy == 100:
+                    player2.ulted = True
+                    player2.speed_y = -20
+                    player2.energy = 0
+                    player2.energy_bar = pygame.rect.Rect(player2.energy_bar_x, player2.energy_bar_y,
+                                                          player2.energy, 20)
 
-        if self.x > target.x:
-            self.x += 1
-            target.x -= 1
-        if target.x > self.x:
-            target.x += 1
-            self.x -= 1
-        if target.y > self.y:
-            if target.touching_ground:
-                self.y = target.y - 100
+                if event.key == pygame.K_r and player1.energy >= 5 and not player1.sword:
+                    player1.sword_attack()
 
-            self.jump()
-        if self.y > target.y:
-            if self.touching_ground:
-                target.y = self.y - 100
+                if event.key == pygame.K_q and player1.energy >= 5:
+                    player1.dash_attack()
 
-            target.jump()
-        elif target.img_rect.top > self.img_rect.bottom and not target.touching_ground:
-            self.jump()
-        elif self.img_rect.top > target.img_rect.bottom and not self.touching_ground:
-            target.jump()
+        pressed_keys = pygame.key.get_pressed()
+        if pressed_keys[pygame.K_d]:
+            player1.move_right()
 
-        self.switch_speeds(target)
+        if pressed_keys[pygame.K_a]:
+            player1.move_left()
 
-    def update(self):
-        if not self.invisible:
-            if self.x >= 831:
-                self.speed_x *= -0.9
-                self.x -= 1
-            if self.x <= 84:
-                self.speed_x *= -0.9
-                self.x += 1
-            if not self.touching_ground:
-                self.gravity()
-            else:
-                self.jumps = 0
-            self.x += self.speed_x
-            self.y += self.speed_y
-            self.check_collision(player2)
-            if self.sword:
-                if self.sword_timer + 0.5 <= time.time():
-                    self.sword = False
-                    self.current_img = self.images_right[0] if self.id == 1 else self.images_left[0]
+        if pressed_keys[pygame.K_RIGHT]:
+            player2.move_right()
 
-    def check_collision(self, target):
-        if self.mask.overlap(target.mask, (self.x - target.x, self.y - target.y)):
-            if self.x > target.x:
-                self.img_rect.left = target.img_rect.right
-            elif target.x > self.x:
-                target.img_rect.left = self.img_rect.right
-            if self.y < target.y:
-                self.img_rect.top = target.img_rect.bottom
-            elif target.y < self.y:
-                target.img_rect.top = self.img_rect.bottom
+        if pressed_keys[pygame.K_LEFT]:
+            player2.move_left()
 
-    def sword_attack(self):
-        self.energy -= 5
-        self.energy_bar = pygame.rect.Rect(self.energy_bar_x, self.energy_bar_y, self.energy, 20)
-        self.sword = True
-        self.sword_timer = time.time()
-        print("sword_on")
+        for i in range(10):
+            for j in range(10):
+                if i == 0:
+                    grass = random.randint(0, 1)
+                    grasses.append(temp[grass])
+                    screen.blit(grasses[j], (j * 80, 600 + (i * 20)))
+                else:
+                    screen.blit(ground, (j * 80, 600 + (i * 20)))
 
-    def dash_attack(self):
-        self.energy -= 5
-        self.energy_bar = pygame.rect.Rect(self.energy_bar_x, self.energy_bar_y, self.energy, 20)
-        mx, my = pygame.mouse.get_pos()
-        target = pygame.math.Vector2(mx, my)
-        start = pygame.math.Vector2(self.x, self.y)
-        self.direction = (target - start).normalize() * 10
-        self.speed_x += self.direction.x
-        self.speed_y = self.direction.y
+        pygame.display.update()
 
 
-player1 = Character(200, 500, 0, 0, 0, (255, 0, 0), 10, 10, 10, 40, 1)
-player2 = Character(700, 500, 0, 0, 0, (0, 0, 255), 690, 10, 690, 40, 2)
-players = [player1, player2]
-cpu = CPU(100, player2, player1)
+def game_over(winner):
+    current_time = pygame.time.get_ticks()
+    text1_surface = my_font.render(f"{winner} Has Won!", True, (255, 255, 255))
+    text2_surface = my_font.render("Press R To Restart Or Any Other Key To Quit", True, (255, 255, 255))
+    text1_x = 400 - text1_surface.get_width() // 2
+    base1_y = 200
+    text2_x = 400 - text2_surface.get_width() // 2
+    base2_y = 300
+    amplitude = 50
+    frequency = 0.05
+
+    t = 0
+    while True:
+        clock.tick(30)
+        screen.fill((0, 216, 255))
+
+        for i in range(4):
+            screen.blit(cloud, clouds[i])
+            clouds[i].x -= 1
+            if clouds[i].x <= -200:
+                clouds[i].x = 800
+
+        text1_y = base1_y + amplitude * math.sin(t)
+        text2_y = base2_y + amplitude * math.sin(t)
+
+        screen.blit(text1_surface, (text1_x, int(text1_y)))
+        screen.blit(text2_surface, (text2_x, int(text2_y)))
+
+        t += frequency
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.KEYDOWN and pygame.time.get_ticks() - current_time >= 500:
+                if event.key == pygame.K_r:
+                    return True
+                else:
+                    pygame.quit()
+                    sys.exit()
+
+        for i in range(10):
+            for j in range(10):
+                if i == 0:
+                    grass = random.randint(0, 1)
+                    grasses.append(temp[grass])
+                    screen.blit(grasses[j], (j * 80, 600 + (i * 20)))
+                else:
+                    screen.blit(ground, (j * 80, 600 + (i * 20)))
+
+        pygame.display.update()
